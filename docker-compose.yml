@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  traefik:
+    # The official v2 Traefik docker image
+    image: traefik:v2.2
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+# ...
+  s3-proxy:
+    image: pottava/s3-proxy
+    ports:
+      - 8081:80
+    environment:
+      - AWS_REGION=${AWS_REGION}
+      - AWS_S3_BUCKET=${AWS_BUCKET}
+      - DIRECTORY_LISTINGS=true
+    container_name: s3-proxy
+    labels:
+      - "traefik.http.routers.s3-proxy.rule=Host(`${LB_HOST}`)"
+
