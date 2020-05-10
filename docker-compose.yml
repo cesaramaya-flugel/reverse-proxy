@@ -23,6 +23,7 @@ services:
       - AWS_REGION=${AWS_REGION}
       - AWS_S3_BUCKET=${AWS_BUCKET}
       - DIRECTORY_LISTINGS=true
+      - ACCESS_LOG=true
     container_name: s3-proxy
     labels:
       - "traefik.http.routers.s3-proxy.rule=Host(`${LB_HOST}`)"
